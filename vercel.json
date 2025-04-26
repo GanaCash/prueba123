@@ -1,7 +1,4 @@
 {
-       "version": 2,
-       "framework": null,
-       
   "functions": {
     "api/*.php": {
       "runtime": "vercel-php@0.7.0"
@@ -10,19 +7,4 @@
       "runtime": "vercel-php@0.7.0"
     }
   }
-
-       "routes": [
-           {
-               "src": "/api/(.*)",
-               "dest": "/api/$1"
-           },
-           {
-               "src": "/(.*)",
-               "dest": "/public/$1"
-           }
-       ],
-       "env": {
-           "APP_ENV": "production",
-           "DATABASE_URL": "postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
-       }
-   }
+}
