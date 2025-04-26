@@ -1,6 +1,9 @@
 {
   "require": {
-    "supabase/supabase-php": "^1.0",
+    "supabase/supabase-php": "^0.0.3",
     "ext-pgsql": "*"
+  },
+  "config": {
+    "platform-check": false
   }
 }
