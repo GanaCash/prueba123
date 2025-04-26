@@ -1,6 +1,6 @@
 {
-    "require": {
-        "supabase/supabase-php": "^1.0",
-        "ext-pgsql": "*"
-    }
+  "require": {
+    "supabase/supabase-php": "^1.0",
+    "ext-pgsql": "*"
+  }
 }
