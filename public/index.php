@@ -1,14 +1,27 @@
 <?php
 session_start();
 
-// Generar o cargar el user_id (similar a FingerprintJS, pero usaremos una sesión para simplificar)
+// Generar o cargar el user_id (similar a FingerprintJS, pero usamos una sesión)
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['user_id'] = md5(uniqid(rand(), true)); // Genera un user_id único
 }
 $user_id = $_SESSION['user_id'];
 
-// Inicializar los puntos desde localStorage (simulado con una cookie para PHP)
-$points = isset($_COOKIE['points_' . $user_id]) ? (int)$_COOKIE['points_' . $user_id] : 0;
+// Inicializar los puntos (consultar desde Supabase en lugar de una cookie)
+$dbUrl = getenv('DATABASE_URL');
+$initial_points = 0;
+if ($dbUrl) {
+    $db = pg_connect($dbUrl);
+    if ($db) {
+        $query = "SELECT amount FROM user_points WHERE user_id = $1";
+        $result = pg_query_params($db, $query, [$user_id]);
+        if (pg_num_rows($result) > 0) {
+            $row = pg_fetch_assoc($result);
+            $initial_points = (int)$row['amount'];
+        }
+        pg_close($db);
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +50,7 @@ $points = isset($_COOKIE['points_' . $user_id]) ? (int)$_COOKIE['points_' . $use
 </head>
 <body>
     <h1>Survey Wall</h1>
-    <div id="points-display">Points: <span id="points"><?php echo $points; ?></span></div>
+    <div id="points-display">Points: <span id="points"><?php echo $initial_points; ?></span></div>
     <button onclick="redirectToSurvey()">Go to Survey Wall</button>
     <div id="survey-container" style="display: none;">
         <iframe id="survey-iframe" scrolling="yes" frameborder="0"></iframe>
@@ -47,14 +60,11 @@ $points = isset($_COOKIE['points_' . $user_id]) ? (int)$_COOKIE['points_' . $use
     <script>
         const userId = "<?php echo $user_id; ?>";
         let lastTimestamp = 0;
-        let points = <?php echo $points; ?>;
+        let points = <?php echo $initial_points; ?>;
 
         function updatePoints(newPoints) {
             points += parseInt(newPoints);
             console.log('Updating points to:', points);
-
-            // Guardar los puntos en una cookie (simulando localStorage en PHP)
-            document.cookie = `points_${userId}=${points}; path=/; max-age=${60*60*24*30}`; // Expira en 30 días
             document.getElementById('points').textContent = points;
 
             // Mostrar notificación
