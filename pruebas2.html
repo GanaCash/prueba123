@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitaciones con Supabase</title>
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://cdn.jsdelivr.net;
+    style-src 'self';
+    connect-src 'self' https://gggjysnhtlnhxscchmem.supabase.co wss://gggjysnhtlnhxscchmem.supabase.co https://gggjysnhtlnhxscchmem.supabase.co/functions/v1/*;
+  ">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm" 
+          integrity="sha384-RxRYnchZ2A72dA8UheiPNQU47DaEGGXFe0vTsu+BkLRvTPhub5sfpavh1Dzw7LlH" 
+          crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="status"></div>
+  <div>Código actual: <span id="currentId"></span></div>
+  <div>Puntos: <span id="points">0</span></div>
+  <button id="generateBtn">Generar Código</button>
+  <button id="copyButton" class="hidden">Copiar Código</button>
+  <div id="usarid">
+    <input type="text" id="friendId" placeholder="Ingresa el código de un amigo" maxlength="6">
+    <button id="useFriendBtn">Usar código</button>
+  </div>
+  <div id="ownerCodeSection">
+    <input type="text" id="ownerCode" placeholder="Ingresa el código del dueño" maxlength="6">
+    <button id="useOwnerCodeBtn">Usar código del dueño</button>
+  </div>
+  <div id="container-invitar" class="hidden">Container Invitar</div>
+  <div id="game-container" class="hidden"></div>
+  <div id="shareOptions" class="hidden">Opciones de compartir</div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
