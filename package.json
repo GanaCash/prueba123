@@ -1,7 +1,7 @@
 {
-  "name": "ganacash",
+  "name": "probando-zeta-five",
   "version": "1.0.0",
-  "description": "GanaCash app with Turnstile verification",
+  "description": "GanaCash con verificación Turnstile",
   "scripts": {
     "start": "vercel dev"
   },
