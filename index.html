@@ -4,8 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GanaCash</title>
-   
-
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #007bff;
+            color: white;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .download-btn, .submit-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+        }
+        .download-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .download-btn:hover:not(:disabled) {
+            background-color: #218838;
+        }
+        .turnstile-container {
+            margin: 20px auto;
+            display: none;
+        }
+        .message {
+            margin-top: 10px;
+            font-size: 1em;
+            color: red;
+        }
+        .hero-waves {
+            display: block;
+            width: 100%;
+        }
+    </style>
     <!-- Load Cloudflare Turnstile script -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </head>
@@ -25,5 +75,59 @@
         </svg>
     </section>
 
+    <script>
+        const verifyBtn = document.getElementById('verifyBtn');
+        const downloadLink = document.getElementById('downloadLink');
+        const turnstileWidget = document.getElementById('turnstileWidget');
+        const messageDiv = document.getElementById('message');
+
+        verifyBtn.addEventListener('click', () => {
+            // Show Turnstile widget
+            turnstileWidget.style.display = 'block';
+            verifyBtn.disabled = true;
+
+            // Render Turnstile widget
+            turnstile.render('#turnstileWidget', {
+                sitekey: '0x4AAAAAABYe1z0oX0MOlD92',
+                callback: async (token) => {
+                    // Send token to backend for verification
+                    try {
+                        const response = await fetch('/api/verify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token })
+                        });
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // Verification successful, show download link
+                            messageDiv.style.color = 'green';
+                            messageDiv.textContent = '¡Verificación exitosa! Puedes descargar ahora.';
+                            verifyBtn.style.display = 'none';
+                            downloadLink.style.display = 'inline-block';
+                            turnstileWidget.style.display = 'none';
+                        } else {
+                            // Verification failed
+                            messageDiv.textContent = result.message || 'Error en la verificación';
+                            verifyBtn.disabled = false;
+                            turnstileWidget.style.display = 'none';
+                            turnstile.reset('#turnstileWidget');
+                        }
+                    } catch (error) {
+                        console.error('Verification error:', error);
+                        messageDiv.textContent = 'Error al verificar. Intenta de nuevo.';
+                        verifyBtn.disabled = false;
+                        turnstileWidget.style.display = 'none';
+                        turnstile.reset('#turnstileWidget');
+                    }
+                },
+                'error-callback': () => {
+                    messageDiv.textContent = 'Error al cargar el CAPTCHA';
+                    verifyBtn.disabled = false;
+                    turnstileWidget.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
